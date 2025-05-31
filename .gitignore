@@ -1,0 +1,11 @@
+myenv/
+ssd_mobilenet_combined.pth
+ssd_mobilenet_combined_full.pth
+ssd_mobilenet_combined_pretrained_state_dict.pth
+ssd_mobilenet_combined_pretrained_state_dict_0000000.pth
+ssd_mobilenet_combined_state_dict.pth
+mobilenet_v3_large_pretrained_state_dict_00000000.pth
+mobilenetv3_large_full.pth
+mobilenetv3_large_state_dict.pth
+ssd300_vgg16_full.pth
+ssd300_vgg16_state_dict.pth
