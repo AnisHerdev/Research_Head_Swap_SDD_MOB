@@ -19,7 +19,6 @@ For **Windows**:
 py -3.11 -m venv myenv
 myenv\Scripts\activate
 ```
-```
 
 ### 4. Install Requirements
 
