@@ -30,7 +30,7 @@ def download_and_extract_tiny_imagenet(data_dir="./data"):
         print("Tiny ImageNet already downloaded and extracted.")
     return extract_path
 
-def get_random_split(dataset, total_images=30000, train_ratio=0.7, seed=42):
+def get_random_split(dataset, total_images=5000, train_ratio=0.7, seed=42):
     random.seed(seed)
     indices = list(range(len(dataset)))
     random.shuffle(indices)

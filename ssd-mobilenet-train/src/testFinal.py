@@ -28,8 +28,14 @@ transform = transforms.Compose([
 image = Image.open("elephant.jpg").convert("RGB")
 input_tensor = transform(image).unsqueeze(0)  # Add batch dimension
 
+cifar10_classes = [
+    'airplane', 'automobile', 'bird', 'cat', 'deer',
+    'dog', 'frog', 'horse', 'ship', 'truck'
+]
+
 # 4. Run inference
 with torch.no_grad():
     output = model(input_tensor)
     predicted_class = output.argmax(dim=1).item()
     print("Predicted class index:", predicted_class)
+    print("Predicted class name:", cifar10_classes[predicted_class])
