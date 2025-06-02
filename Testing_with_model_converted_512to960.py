@@ -54,7 +54,7 @@ with torch.no_grad():
     # output = model(input_tensor)
     output = model(torch.randn(4, 3, 512, 512))  # Dummy input for testing
     print("Output shape: ", output.shape)  # Should be [4, 1000] for batch size of 4
-    print(output.cpu().numpy())
+    # print(output.cpu().numpy())
     probs = torch.nn.functional.softmax(output[0], dim=0)
 # === 5. Print Top Prediction ===
 label_url = 'https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt'
