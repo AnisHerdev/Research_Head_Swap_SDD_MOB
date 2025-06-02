@@ -10,3 +10,4 @@ mobilenetv3_large_state_dict.pth
 ssd300_vgg16_full.pth
 ssd300_vgg16_state_dict.pth
 ssd-mobilenet-train/data/
+data/
