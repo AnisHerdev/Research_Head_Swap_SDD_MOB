@@ -61,7 +61,7 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=25):
         print(f'\nEpoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss:.4f}')
         
         # Save model checkpoint
-        utils.save_checkpoint(model, optimizer, epoch, epoch_loss, f"checkpoint_epoch_{epoch+1}.pth")
+        utils.save_checkpoint(model, optimizer, epoch, epoch_loss, f"checkpoint_epoch_resume_{epoch+1}.pth")
         torch.cuda.empty_cache()
 
 def main():
@@ -70,8 +70,10 @@ def main():
 
     # Hyperparameters
     batch_size = 32
-    learning_rate = 0.001
-    num_epochs = 10
+    learning_rate = 0.0001
+    num_epochs = 10  # Number of epochs for a fresh run
+    resume_checkpoint = "checkpoint_epoch_10.pth"  # Change to your checkpoint file
+    extra_epochs = 10  # Number of extra epochs to train after resuming
 
     # Data transformations
     transform = transforms.Compose([
@@ -100,8 +102,6 @@ def main():
 
     ssd_backbone = ssd_model.backbone
     mobilenet_classifier = mobilenet.classifier
-    print(mobilenet_classifier)
-    # exit()
     conv_512_to_960 = nn.Conv2d(512, 960, kernel_size=1)
     model = SSDMobileNetClassifier(ssd_backbone, conv_512_to_960, mobilenet_classifier)
     model = model.to(device)
@@ -109,8 +109,19 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-    # Train the model
-    train_model(model, train_loader, criterion, optimizer, device, num_epochs)
+    start_epoch = 0
+
+    # === Load checkpoint if exists ===
+    if os.path.exists(resume_checkpoint):
+        print(f"Loading checkpoint: {resume_checkpoint}")
+        checkpoint = torch.load(resume_checkpoint, map_location=device)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        start_epoch = checkpoint['epoch'] + 1  # Continue from next epoch
+        print(f"Resumed from epoch {start_epoch}")
+
+    # Train the model for extra_epochs
+    train_model(model, train_loader, criterion, optimizer, device, num_epochs=extra_epochs)
 
     # Save the final model
     torch.save(model.state_dict(), "final_ssd_mobilenet_Imagenet.pth")
