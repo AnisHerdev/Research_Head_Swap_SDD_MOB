@@ -124,7 +124,7 @@ def main():
     train_model(model, train_loader, criterion, optimizer, device, num_epochs=extra_epochs)
 
     # Save the final model
-    torch.save(model.state_dict(), "final_ssd_mobilenet_Imagenet.pth")
+    torch.save(model.state_dict(), "final_ssd_mobilenet_Imagenet_Resumed.pth")
 
 def save_checkpoint(model, optimizer, epoch, loss, filepath):
     torch.save({

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 from torchvision.datasets import CIFAR10
 from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 from torchvision.models import mobilenet_v3_large, MobileNet_V3_Large_Weights
@@ -15,9 +15,10 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=25):
         model.train()
         running_loss = 0.0
         print("Epoch:", epoch+1)
-        for inputs, labels in dataloader:
+        print("Dataloader size:", dataloader.__len__())
+        for index, (inputs, labels) in enumerate(dataloader):
             inputs = inputs.to(device)
-            print(inputs.shape)
+            print("\r[Batch {}]".format(index), end='', flush=True)
             labels = labels.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -30,16 +31,16 @@ def train_model(model, dataloader, criterion, optimizer, device, num_epochs=25):
         print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss:.4f}')
         
         # Save model checkpoint
-        utils.save_checkpoint(model, optimizer, epoch, epoch_loss, f"checkpoint_epoch_{epoch+1}.pth")
+        utils.save_checkpoint(model, optimizer, epoch, epoch_loss, f"checkpoint_epoch_Cifar_{epoch+1}.pth")
 
 def main():
     # Device configuration
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Hyperparameters
-    batch_size = 16
+    batch_size = 32
     learning_rate = 0.001
-    num_epochs = 25
+    num_epochs = 20
 
     # Data transformations
     transform = transforms.Compose([
@@ -49,10 +50,13 @@ def main():
                              std=[0.229, 0.224, 0.225])
     ])
 
-    # Download CIFAR-10 dataset
+    # Download CIFAR-10 dataset and use only 7,000 samples
     train_dataset = CIFAR10(root='./data', train=True, download=True, transform=transform)
-    print(train_dataset)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    subset_indices = list(range(7000))
+    train_subset = Subset(train_dataset, subset_indices)
+    print(train_subset)
+    train_loader = DataLoader(train_subset, batch_size=batch_size, shuffle=True)
+
     # === 2. Re-load pretrained SSD + MobileNet heads ===
     ssd_model = ssd300_vgg16(weights=SSD300_VGG16_Weights.DEFAULT)
     mobilenet = mobilenet_v3_large(weights=MobileNet_V3_Large_Weights.IMAGENET1K_V1)
@@ -72,7 +76,7 @@ def main():
     train_model(model, train_loader, criterion, optimizer, device, num_epochs)
 
     # Save the final model
-    torch.save(model.state_dict(), "final_ssd_mobilenet.pth")
+    torch.save(model.state_dict(), "final_ssd_mobilenet_Cifar.pth")
 
 def save_checkpoint(model, optimizer, epoch, loss, filepath):
     torch.save({
