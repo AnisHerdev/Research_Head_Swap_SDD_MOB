@@ -15,12 +15,17 @@ class SSDMobileNetClassifier(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.classifier = classifier
 
-    def forward(self, x):
+    def forward(self, x, return_features=False):
         features = self.backbone(x)["0"]
+        print("Feature map for backbone: ",features.shape)   # Return the feature map directly
         x = self.channel_mapper(features)
+        print("After channel mapper: ",x.shape)
         x = self.avgpool(x)
+        print(x.shape)
         x = torch.flatten(x, 1)
+        print("Input for the head: ",x.shape)
         x = self.classifier(x)
+        print("Post classification: ",x.shape)
         return x
 
 # === 2. Re-load pretrained SSD + MobileNet heads ===
@@ -32,7 +37,6 @@ mobilenet_classifier = mobilenet.classifier
 print(mobilenet_classifier)
 # exit()
 conv_512_to_960 = nn.Conv2d(512, 960, kernel_size=1)
-
 model = SSDMobileNetClassifier(ssd_backbone, conv_512_to_960, mobilenet_classifier)
 model.load_state_dict(torch.load('ssd_mobilenet_combined_pretrained_state_dict.pth', map_location='cpu'))
 model.eval()
@@ -50,6 +54,7 @@ transform = transforms.Compose([
 
 input_tensor = transform(image).unsqueeze(0)
 # === 4. Inference ===
+print("Input tensor: ",input_tensor.shape)
 with torch.no_grad():
     # output = model(input_tensor)
     output = model(torch.randn(4, 3, 512, 512))  # Dummy input for testing
