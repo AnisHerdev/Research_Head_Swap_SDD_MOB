@@ -21,7 +21,9 @@ model = SSDMobileNetClassifier(ssd_backbone, conv_512_to_960, mobilenet_classifi
 model = model.to(device)
 
 # 2. Load saved weights
-model.load_state_dict(torch.load("final_ssd_mobilenet_Cifar.pth", map_location=device))
+# model.load_state_dict(torch.load("final_ssd_mobilenet_Cifar.pth", map_location=device))
+checkpoint = torch.load("checkpoint_epoch_Cifar_15.pth", map_location=device)
+model.load_state_dict(checkpoint["model_state_dict"])
 model.eval()
 
 # 3. Preprocess input image
@@ -49,7 +51,7 @@ with torch.no_grad():
 # 5. Calculate accuracy on the **last** 3000 samples of CIFAR-10 test set
 test_dataset = CIFAR10(root='./data', train=False, download=True, transform=transform)
 total_test = len(test_dataset)
-test_subset = Subset(test_dataset, list(range(total_test - 7000, total_test)))  # Use only last 3000 samples
+test_subset = Subset(test_dataset, list(range(total_test - 3000, total_test)))  # Use only last 3000 samples
 test_loader = DataLoader(test_subset, batch_size=32, shuffle=False)
 # test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 

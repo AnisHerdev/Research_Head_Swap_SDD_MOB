@@ -103,7 +103,6 @@ for i in range(n_iterations):
     print(f"\n=== Active Learning Iteration {i+1} ===")
     
     labeled_loader = DataLoader(labeled_dataset, batch_size=batch_size, shuffle=True)
-    
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
     
     # Train the model
@@ -112,6 +111,9 @@ for i in range(n_iterations):
     accuracies.append(acc)
     
     print(f"Train Loss: {train_loss:.4f} | Test Accuracy: {acc:.4f} | Labeled Size: {len(labeled_dataset)}")
+    
+    # Save model after each iteration
+    torch.save(model.state_dict(), f"active_learning_model_iter_{i+1}.pth")
     
     # Stop if no more unlabeled data
     if len(unlabeled_dataset) == 0:
