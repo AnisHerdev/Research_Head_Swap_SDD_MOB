@@ -20,3 +20,7 @@ Epoch [9/10]
 [Batch 200/200]Epoch [9/10], Loss: 1.0089
 Epoch [10/10]
 [Batch 200/200]Epoch [10/10], Loss: 0.8525
+    python testWithCaltech101.py 
+    [Batch 86/86]Test Accuracy on Caltech101: 76.20%
+    Sample image: image_0018.jpg
+    Predicted class: butterfly
