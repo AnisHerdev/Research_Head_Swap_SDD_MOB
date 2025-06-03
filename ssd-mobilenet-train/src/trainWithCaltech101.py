@@ -13,7 +13,7 @@ import utils
 def main():
     # Device configuration
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+    print(device)
     # Hyperparameters
     batch_size = 32
     learning_rate = 0.0001

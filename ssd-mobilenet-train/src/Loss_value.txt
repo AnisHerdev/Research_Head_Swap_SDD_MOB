@@ -1,0 +1,22 @@
+python trainWithCaltech101.py 
+cuda
+Epoch [1/10]
+[Batch 200/200]Epoch [1/10], Loss: 4.0209
+Epoch [2/10]
+[Batch 200/200]Epoch [2/10], Loss: 2.9156
+Epoch [3/10]
+[Batch 200/200]Epoch [3/10], Loss: 2.4926
+Epoch [4/10]
+[Batch 200/200]Epoch [4/10], Loss: 2.1756
+Epoch [5/10]
+[Batch 200/200]Epoch [5/10], Loss: 1.8957
+Epoch [6/10]
+[Batch 200/200]Epoch [6/10], Loss: 1.6420
+Epoch [7/10]
+[Batch 200/200]Epoch [7/10], Loss: 1.4164
+Epoch [8/10]
+[Batch 200/200]Epoch [8/10], Loss: 1.1988
+Epoch [9/10]
+[Batch 200/200]Epoch [9/10], Loss: 1.0089
+Epoch [10/10]
+[Batch 200/200]Epoch [10/10], Loss: 0.8525
