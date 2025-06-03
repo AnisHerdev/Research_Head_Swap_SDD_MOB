@@ -39,8 +39,8 @@ def main():
 
     # Hyperparameters
     batch_size = 32
-    learning_rate = 0.001
-    num_epochs = 20
+    learning_rate = 0.0001
+    num_epochs = 15
 
     # Data transformations
     transform = transforms.Compose([
