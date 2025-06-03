@@ -20,21 +20,36 @@ def main():
     num_epochs = 10
 
     # Data transformations
-    transform = transforms.Compose([
+    # Data augmentation for training
+    train_transform = transforms.Compose([
+        transforms.Resize((300, 300)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(15),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                            std=[0.229, 0.224, 0.225])
+    ])
+
+    # No augmentation for validation/test
+    test_transform = transforms.Compose([
         transforms.Resize((300, 300)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225])
+                            std=[0.229, 0.224, 0.225])
     ])
 
-
     data_dir = "./data/101_ObjectCategories"
-    dataset = ImageFolder(root=data_dir, transform=transform)
+    full_dataset = ImageFolder(root=data_dir, transform=None)  # We'll set transform per split
 
     # Split into train/test (70% train, 30% test)
-    train_size = int(0.7 * len(dataset))
-    test_size = len(dataset) - train_size
-    train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+    train_size = int(0.7 * len(full_dataset))
+    test_size = len(full_dataset) - train_size
+    train_dataset, test_dataset = random_split(full_dataset, [train_size, test_size])
+
+    # Assign transforms to each split
+    train_dataset.dataset.transform = train_transform
+    test_dataset.dataset.transform = test_transform
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
