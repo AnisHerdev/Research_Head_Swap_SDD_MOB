@@ -38,7 +38,7 @@ def main():
     model = model.to(device)
 
     # Load trained weights
-    model.load_state_dict(torch.load("final_ssd_mobilenet_caltech101.pth", map_location=device))
+    model.load_state_dict(torch.load("final_ssd_mobilenet_caltech101_resumed.pth", map_location=device))
     model.eval()
 
     # Get class names
@@ -47,27 +47,31 @@ def main():
     # Evaluate accuracy
     correct = 0
     total = 0
-    with torch.no_grad():
-        for batchidx,(images, labels) in enumerate(test_loader):
-            print("\r[Batch {}/{}]".format(batchidx + 1, len(test_loader)), end="")
-            images = images.to(device)
-            labels = labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-    accuracy = 100 * correct / total
-    print(f"Test Accuracy on Caltech101: {accuracy:.2f}%")
+    # with torch.no_grad():
+    #     for batchidx,(images, labels) in enumerate(test_loader):
+    #         print("\r[Batch {}/{}]".format(batchidx + 1, len(test_loader)), end="")
+    #         images = images.to(device)
+    #         labels = labels.to(device)
+    #         outputs = model(images)
+    #         _, predicted = torch.max(outputs, 1)
+    #         total += labels.size(0)
+    #         correct += (predicted == labels).sum().item()
+    # accuracy = 100 * correct / total
+    # print(f"Test Accuracy on Caltech101: {accuracy:.2f}%")
 
     # Predict and print class name for a sample image from test set
-    sample_img_path, _ = test_dataset.dataset.samples[test_dataset.indices[0]]
-    sample_img = Image.open(sample_img_path).convert("RGB")
-    input_tensor = transform(sample_img).unsqueeze(0).to(device)
-    with torch.no_grad():
-        output = model(input_tensor)
-        pred_idx = output.argmax(dim=1).item()
-        print(f"Sample image: {os.path.basename(sample_img_path)}")
-        print(f"Predicted class: {class_names[pred_idx]}")
+    # Predict and print class name for a user-provided image
+    user_img_path = "elephant.jpg"  # Change this to your image path
+    if os.path.exists(user_img_path):
+        user_img = Image.open(user_img_path).convert("RGB")
+        input_tensor = transform(user_img).unsqueeze(0).to(device)
+        with torch.no_grad():
+            output = model(input_tensor)
+            pred_idx = output.argmax(dim=1).item()
+            print(f"User image: {os.path.basename(user_img_path)}")
+            print(f"Predicted class: {class_names[pred_idx]}")
+    else:
+        print(f"User image not found at {user_img_path}")
 
 if __name__ == "__main__":
     main()
