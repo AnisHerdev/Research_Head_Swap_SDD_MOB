@@ -38,7 +38,7 @@ def main():
     model = model.to(device)
 
     # Load trained weights
-    model.load_state_dict(torch.load("final_ssd_mobilenet_caltech101.pth", map_location=device))
+    model.load_state_dict(torch.load("final_ssd_mobilenet_caltech101_resumed.pth", map_location=device))
     model.eval()
 
     # Get class names

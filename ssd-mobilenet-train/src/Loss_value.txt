@@ -24,3 +24,29 @@ Epoch [10/10]
     [Batch 86/86]Test Accuracy on Caltech101: 76.20%
     Sample image: image_0018.jpg
     Predicted class: butterfly
+trainWithCaltech101_Resume.py 
+cuda
+Loading checkpoint: caltech101_checkpoint_epoch_10.pth
+Resumed from epoch 10
+Epoch [11/20]
+[Batch 200/200]Epoch [11/20], Loss: 0.9238
+Epoch [12/20]
+[Batch 200/200]Epoch [12/20], Loss: 0.6917
+Epoch [13/20]
+[Batch 200/200]Epoch [13/20], Loss: 0.5321
+Epoch [14/20]
+[Batch 200/200]Epoch [14/20], Loss: 0.3937
+Epoch [15/20]
+[Batch 200/200]Epoch [15/20], Loss: 0.2906
+Epoch [16/20]
+[Batch 200/200]Epoch [16/20], Loss: 0.1983
+Epoch [17/20]
+[Batch 200/200]Epoch [17/20], Loss: 0.1369
+Epoch [18/20]
+[Batch 200/200]Epoch [18/20], Loss: 0.1158
+Epoch [19/20]
+[Batch 200/200]Epoch [19/20], Loss: 0.0651
+Epoch [20/20]
+[Batch 200/200]Epoch [20/20], Loss: 0.0365
+    python testWithCaltech101.py 
+    [Batch 86/86]Test Accuracy on Caltech101: 95.41%
