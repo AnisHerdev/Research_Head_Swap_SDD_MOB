@@ -61,7 +61,7 @@ def main():
 
     # Predict and print class name for a sample image from test set
     # Predict and print class name for a user-provided image
-    user_img_path = "train.jpg"  # Change this to your image path
+    user_img_path = "dolphin.jpg"  # Change this to your image path
     if os.path.exists(user_img_path):
         user_img = Image.open(user_img_path).convert("RGB")
         input_tensor = transform(user_img).unsqueeze(0).to(device)

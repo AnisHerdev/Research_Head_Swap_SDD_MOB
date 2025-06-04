@@ -90,3 +90,146 @@ Train Loss: 1.1458 | Test Accuracy: 0.5800 | Labeled Size: 3400
 Computing uncertainties on unlabeled data...
 [Uncertainty Batch 1066/1066]
 Logged 100 queried samples to label_log_iter_10.txt
+-------------------------------------------------------------------
+The below information is with 
+batch_size = 32
+query_batch = 300
+n_iterations = 15
+
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python uncertaintyLearningWithLogging.py
+Using device: cuda
+
+=== Active Learning Iteration 1 ===
+[Training Batch 79/79]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 2.1294 | Test Accuracy: 0.2183 | Labeled Size: 2500
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1094/1094]
+Logged 300 queried samples to saved_state/label_log_iter_1.txt
+
+=== Active Learning Iteration 2 ===
+[Training Batch 88/88]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.8289 | Test Accuracy: 0.3227 | Labeled Size: 2800
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1085/1085]
+Logged 300 queried samples to saved_state/label_log_iter_2.txt
+
+=== Active Learning Iteration 3 ===
+[Training Batch 97/97]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.6526 | Test Accuracy: 0.4190 | Labeled Size: 3100
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1075/1075]
+Logged 300 queried samples to saved_state/label_log_iter_3.txt
+
+=== Active Learning Iteration 4 ===
+[Training Batch 107/107]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.6138 | Test Accuracy: 0.3685 | Labeled Size: 3400
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1066/1066]
+Logged 300 queried samples to saved_state/label_log_iter_4.txt
+
+=== Active Learning Iteration 5 ===
+[Training Batch 116/116]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.4895 | Test Accuracy: 0.4535 | Labeled Size: 3700
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1057/1057]
+Logged 300 queried samples to saved_state/label_log_iter_5.txt
+
+=== Active Learning Iteration 6 ===
+[Training Batch 125/125]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.3998 | Test Accuracy: 0.5244 | Labeled Size: 4000
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1047/1047]
+Logged 300 queried samples to saved_state/label_log_iter_6.txt
+
+=== Active Learning Iteration 7 ===
+[Training Batch 135/135]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.3534 | Test Accuracy: 0.5624 | Labeled Size: 4300
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1038/1038]
+Logged 300 queried samples to saved_state/label_log_iter_7.txt
+
+=== Active Learning Iteration 8 ===
+[Training Batch 144/144]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.3003 | Test Accuracy: 0.5330 | Labeled Size: 4600
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1029/1029]
+Logged 300 queried samples to saved_state/label_log_iter_8.txt
+
+=== Active Learning Iteration 9 ===
+[Training Batch 154/154]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.2193 | Test Accuracy: 0.5804 | Labeled Size: 4900
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1019/1019]
+Logged 300 queried samples to saved_state/label_log_iter_9.txt
+
+=== Active Learning Iteration 10 ===
+[Training Batch 163/163]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.1316 | Test Accuracy: 0.6247 | Labeled Size: 5200
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1010/1010]
+Logged 300 queried samples to saved_state/label_log_iter_10.txt
+
+=== Active Learning Iteration 11 ===
+[Training Batch 172/172]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.0586 | Test Accuracy: 0.6489 | Labeled Size: 5500
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 1000/1000]
+Logged 300 queried samples to saved_state/label_log_iter_11.txt
+
+=== Active Learning Iteration 12 ===
+[Training Batch 182/182]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 1.0066 | Test Accuracy: 0.6199 | Labeled Size: 5800
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 991/991]
+Logged 300 queried samples to saved_state/label_log_iter_12.txt
+
+=== Active Learning Iteration 13 ===
+[Training Batch 191/191]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 0.9217 | Test Accuracy: 0.6549 | Labeled Size: 6100
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 982/982]
+Logged 300 queried samples to saved_state/label_log_iter_13.txt
+
+=== Active Learning Iteration 14 ===
+[Training Batch 200/200]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 0.8525 | Test Accuracy: 0.6784 | Labeled Size: 6400
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 972/972]
+Logged 300 queried samples to saved_state/label_log_iter_14.txt
+
+=== Active Learning Iteration 15 ===
+[Training Batch 210/210]
+Evaluating...
+[Eval Batch 313/313]
+Train Loss: 0.7675 | Test Accuracy: 0.6773 | Labeled Size: 6700
+Computing uncertainties on unlabeled data...
+[Uncertainty Batch 963/963]
+Logged 300 queried samples to saved_state/label_log_iter_15.txt
