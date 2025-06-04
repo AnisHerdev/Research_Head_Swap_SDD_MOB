@@ -1,13 +1,14 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, Subset, ConcatDataset
+from torch.utils.data import DataLoader, Subset
 from torchvision import datasets, transforms
 import numpy as np
 import matplotlib.pyplot as plt
 from torchvision.models.detection import ssd300_vgg16, SSD300_VGG16_Weights
 from torchvision.models import mobilenet_v3_large, MobileNet_V3_Large_Weights
 import random
+import os
 
 # ============ Device Setup ============
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -29,14 +30,11 @@ class SSDMobileNetClassifier(nn.Module):
         x = torch.flatten(x, 1)
         return self.classifier(x)
 
-# Load models and adapt classifier
+# Load pretrained models and adapt classifier
 ssd_model = ssd300_vgg16(weights=SSD300_VGG16_Weights.DEFAULT)
 mobilenet = mobilenet_v3_large(weights=MobileNet_V3_Large_Weights.IMAGENET1K_V1)
 
-# Adjust classifier for 10-class CIFAR10
 mobilenet.classifier[-1] = nn.Linear(mobilenet.classifier[-1].in_features, 10)
-
-# Combine model
 conv_512_to_960 = nn.Conv2d(512, 960, kernel_size=1)
 model = SSDMobileNetClassifier(ssd_model.backbone, conv_512_to_960, mobilenet.classifier)
 model.to(device)
@@ -51,7 +49,6 @@ transform = transforms.Compose([
 full_dataset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 
-# Split dataset into labeled and unlabeled
 total_size = len(full_dataset)
 indices = list(range(total_size))
 random.shuffle(indices)
@@ -69,7 +66,8 @@ unlabeled_dataset = Subset(full_dataset, unlabeled_indices)
 def train(model, dataloader, optimizer, criterion):
     model.train()
     total_loss = 0
-    for inputs, labels in dataloader:
+    for idx, (inputs, labels) in enumerate(dataloader):
+        print("\r[Training Batch {}/{}]".format(idx + 1, len(dataloader)), end="")
         inputs, labels = inputs.to(device), labels.to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
@@ -77,18 +75,22 @@ def train(model, dataloader, optimizer, criterion):
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
+    print()
     return total_loss / len(dataloader)
 
 def evaluate(model, dataloader):
     model.eval()
     correct = total = 0
+    print("Evaluating...")
     with torch.no_grad():
-        for inputs, labels in dataloader:
+        for idx, (inputs, labels) in enumerate(dataloader):
+            print("\r[Eval Batch {}/{}]".format(idx + 1, len(dataloader)), end="")
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)
             preds = outputs.argmax(dim=1)
             correct += (preds == labels).sum().item()
             total += labels.size(0)
+    print()
     return correct / total
 
 # ============ Active Learning Loop (with logging) ============
@@ -100,32 +102,46 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
 accuracies = []
 
+# Create folder to store states
+os.makedirs("saved_state", exist_ok=True)
+
 for i in range(n_iterations):
     print(f"\n=== Active Learning Iteration {i+1} ===")
 
-    # Train model on current labeled data
+    # Train model
     labeled_loader = DataLoader(labeled_dataset, batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', patience=2, factor=0.5, verbose=True)
+    
     train_loss = train(model, labeled_loader, optimizer, criterion)
     acc = evaluate(model, test_loader)
+    scheduler.step(acc)
+
     accuracies.append(acc)
     print(f"Train Loss: {train_loss:.4f} | Test Accuracy: {acc:.4f} | Labeled Size: {len(labeled_dataset)}")
 
     # Save model
-    torch.save(model.state_dict(), f"active_learning_model_iter_{i+1}.pth")
+    torch.save(model.state_dict(), f"saved_state/model_iter_{i+1}.pth")
+
+    # Save labeled/unlabeled indices
+    np.save(f"saved_state/labeled_indices_iter_{i+1}.npy", np.array(labeled_dataset.indices))
+    np.save(f"saved_state/unlabeled_indices_iter_{i+1}.npy", np.array(unlabeled_dataset.indices))
+    np.save("saved_state/accuracies.npy", np.array(accuracies))
 
     if len(unlabeled_dataset) == 0:
         print("No more unlabeled data to label.")
         break
 
-    # Estimate uncertainty on unlabeled data
+    # Estimate uncertainty
     model.eval()
     unlabeled_loader = DataLoader(unlabeled_dataset, batch_size=batch_size)
     uncertainties = []
     unlabeled_data_indices = []
 
+    print("Computing uncertainties on unlabeled data...")
     with torch.no_grad():
-        for batch_idx, (inputs, _) in enumerate(unlabeled_loader):
+        for idx, (inputs, _) in enumerate(unlabeled_loader):
+            print("\r[Uncertainty Batch {}/{}]".format(idx + 1, len(unlabeled_loader)), end="")
             inputs = inputs.to(device)
             outputs = model(inputs)
             probs = F.softmax(outputs, dim=1)
@@ -133,28 +149,30 @@ for i in range(n_iterations):
             uncertainty = 1 - max_probs
             uncertainties.extend(uncertainty.cpu().numpy())
 
-            # Map current batch to actual dataset indices
-            start_idx = batch_idx * batch_size
+            start_idx = idx * batch_size
             end_idx = start_idx + inputs.size(0)
             batch_indices = unlabeled_dataset.indices[start_idx:end_idx]
             unlabeled_data_indices.extend(batch_indices)
+    print()
 
-    # Select most uncertain samples
+    # Select top uncertain samples
     uncertainties = np.array(uncertainties)
     query_indices_local = np.argsort(-uncertainties)[:query_batch]
     query_indices_global = [unlabeled_data_indices[i] for i in query_indices_local]
     query_uncertainties = uncertainties[query_indices_local]
 
-    # ==== NEW: Log the selected indices and their uncertainty ====
-    log_file = f"label_log_iter_{i+1}.txt"
+    # Log queried samples and uncertainties
+    log_file = f"saved_state/label_log_iter_{i+1}.txt"
     with open(log_file, "w") as f:
         for idx, uncert in zip(query_indices_global, query_uncertainties):
             f.write(f"Index: {idx} | Uncertainty: {uncert:.4f}\n")
     print(f"Logged {query_batch} queried samples to {log_file}")
 
-    # Update labeled and unlabeled sets
+    # Update datasets
     labeled_dataset = Subset(full_dataset, labeled_dataset.indices + query_indices_global)
     unlabeled_dataset = Subset(full_dataset, [idx for idx in unlabeled_dataset.indices if idx not in query_indices_global])
+
+    torch.cuda.empty_cache()
 
 # ============ Plot Accuracy ============
 plt.figure(figsize=(10, 5))
@@ -163,4 +181,5 @@ plt.xlabel("Active Learning Iteration")
 plt.ylabel("Test Accuracy")
 plt.title("Active Learning Performance (Least Confidence Sampling)")
 plt.grid(True)
+plt.savefig("saved_state/accuracy_plot.png")
 plt.show()

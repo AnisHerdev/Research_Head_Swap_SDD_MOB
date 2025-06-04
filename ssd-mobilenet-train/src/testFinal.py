@@ -21,8 +21,10 @@ model = SSDMobileNetClassifier(ssd_backbone, conv_512_to_960, mobilenet_classifi
 model = model.to(device)
 
 # 2. Load saved weights
-# model.load_state_dict(torch.load("final_ssd_mobilenet_Cifar.pth", map_location=device))
-checkpoint = torch.load("checkpoint_epoch_Cifar_15.pth", map_location=device)
+# model.load_state_dict(torch.load("active_learning_model_iter_10.pth", map_location=device))
+# model.load_state_dict(torch.load("active_learning_model_iter_10.pth", map_location=device))
+# model.eval()
+checkpoint = torch.load("active_learning_model_iter_10.pth", map_location=device)
 model.load_state_dict(checkpoint["model_state_dict"])
 model.eval()
 
