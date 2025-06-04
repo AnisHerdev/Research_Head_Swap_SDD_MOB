@@ -17,7 +17,7 @@ def main():
     # Hyperparameters
     batch_size = 32
     learning_rate = 0.0001
-    num_epochs = 10
+    num_epochs = 20
 
     # Data transformations
     # Data augmentation for training
@@ -84,7 +84,10 @@ def main():
             running_loss += loss.item()
         epoch_loss = running_loss / len(train_loader)
         print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss:.4f}")
-        utils.save_checkpoint(model, optimizer, epoch, epoch_loss, f"caltech101_checkpoint_epoch_{epoch+1}.pth")
+        utils.save_checkpoint(
+            model, optimizer, epoch, epoch_loss,
+            f"checkpoints_catech_agumented/caltech101_checkpoint_epoch_{epoch+1}.pth"
+        )
         torch.cuda.empty_cache()
 
     # Save the final model

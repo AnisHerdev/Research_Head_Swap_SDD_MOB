@@ -38,7 +38,7 @@ def main():
     model = model.to(device)
 
     # Load trained weights
-    model.load_state_dict(torch.load("final_ssd_mobilenet_caltech101_resumed.pth", map_location=device))
+    model.load_state_dict(torch.load("final_ssd_mobilenet_caltech101_resumed_augumented.pth", map_location=device))
     model.eval()
 
     # Get class names
@@ -61,7 +61,7 @@ def main():
 
     # Predict and print class name for a sample image from test set
     # Predict and print class name for a user-provided image
-    user_img_path = "butterfly.jpg"  # Change this to your image path
+    user_img_path = "train.jpg"  # Change this to your image path
     if os.path.exists(user_img_path):
         user_img = Image.open(user_img_path).convert("RGB")
         input_tensor = transform(user_img).unsqueeze(0).to(device)

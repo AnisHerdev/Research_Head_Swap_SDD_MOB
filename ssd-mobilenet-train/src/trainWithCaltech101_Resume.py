@@ -14,8 +14,8 @@ def main():
     print(device)
     batch_size = 32
     learning_rate = 0.0001
-    extra_epochs = 10  # Number of extra epochs to train
-    resume_checkpoint = "caltech101_checkpoint_epoch_10.pth"  # Change to your checkpoint
+    extra_epochs = 2  # Number of extra epochs to train
+    resume_checkpoint = "caltech101_checkpoint_epoch_20.pth"  # Change to your checkpoint
 
     # Data transformations
     transform = transforms.Compose([
