@@ -10,9 +10,9 @@ from torchvision.models import mobilenet_v3_large, MobileNet_V3_Large_Weights
 import matplotlib.pyplot as plt
 
 # ============ Configuration ============
-resume_iter = 5  # <-- Change this to the iteration you want to resume from
-total_iterations = 10
-query_batch = 100
+resume_iter = 15  # <-- Change this to the iteration you want to resume from
+total_iterations = 30
+query_batch = 300
 batch_size = 32
 
 # ============ Device Setup ============
@@ -104,7 +104,7 @@ for i in range(resume_iter, total_iterations):
 
     labeled_loader = DataLoader(labeled_dataset, batch_size=batch_size, shuffle=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', patience=2, factor=0.5, verbose=True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', patience=2, factor=0.05)
 
     train_loss = train(model, labeled_loader, optimizer, criterion)
     acc = evaluate(model, test_loader)
