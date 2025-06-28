@@ -1,6 +1,6 @@
 # Research Head Swap SDD MOB
 
-This project is focused on head swapping using deep learning techniques. It provides scripts and tools for data processing, model training, and inference.
+This project focuses on head swapping using deep learning. It includes scripts and tools for data preprocessing, model training, and inference.
 
 ## Setup Instructions
 
